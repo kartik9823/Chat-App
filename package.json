@@ -1,5 +1,6 @@
 {
   "name": "chat-server",
+  "type":"module",
   "version": "1.0.0",
   "description": "Full Stack Chat app",
   "main": "index.js",
