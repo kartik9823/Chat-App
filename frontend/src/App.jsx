@@ -1,5 +1,17 @@
-import { useState } from "react";
-import { Container, AppBar, Toolbar, Typography, Box, TextField, Button, Paper } from "@mui/material";
+import { useState, useEffect } from "react";
+import {
+  Container,
+  AppBar,
+  Toolbar,
+  Typography,
+  Box,
+  TextField,
+  Button,
+  Paper,
+} from "@mui/material";
+import { io } from "socket.io-client";
+
+const socket = io("http://localhost:5000");
 
 function App() {
   const [message, setMessage] = useState("");
@@ -7,9 +19,23 @@ function App() {
 
   const handleSend = () => {
     if (message.trim() === "") return;
-    setMessages([...messages, message]);
+    // setMessages([...messages, message]); //this is for local message handling
+    socket.emit("chat message", {
+      text: message,
+      sender: socket.id,
+    }); //emit message to server
     setMessage("");
   };
+
+  useEffect(() => {
+    socket.on("chat message", (msg) => {
+      setMessages((prev) => [...prev, msg]);
+    });
+
+    return () => {
+      socket.off("chat message");
+    };
+  }, []);
 
   return (
     <Container maxWidth="sm">
@@ -31,8 +57,11 @@ function App() {
         }}
       >
         {messages.map((msg, index) => (
-          <Box key={index} sx={{ marginBottom: 1, textAlign: "left" }}>
-            <Typography variant="body1">{msg}</Typography>
+          <Box key={index} sx={{ marginBottom: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              {msg.sender}
+            </Typography>
+            <Typography variant="body1">{msg.text}</Typography>
           </Box>
         ))}
       </Paper>
