@@ -56,14 +56,34 @@ function App() {
           marginBottom: 2,
         }}
       >
-        {messages.map((msg, index) => (
-          <Box key={index} sx={{ marginBottom: 1 }}>
-            <Typography variant="body2" color="text.secondary">
-              {msg.sender}
-            </Typography>
-            <Typography variant="body1">{msg.text}</Typography>
-          </Box>
-        ))}
+        {messages.map((msg, index) => {
+          const isMine=msg.sender===socket.id;
+          return(
+          <Box 
+            key={index}
+            sx={{
+              display:"flex",
+              justifyContent:isMine?"flex-end":"flex-start",
+              mb:1
+            }}
+            >
+              <Box sx={{
+                px:2,
+                py:1,
+                borderRadius:3,
+                maxWidth:"65%",
+                color:"white",
+                background: isMine
+                ? "linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)" 
+                : "linear-gradient(135deg, #43cea2 0%, #185a9d 100%)", 
+              }}
+              >
+                {socket.id}
+                <Typography variant="body1">{msg.text}</Typography>
+              </Box>
+            </Box>
+          )
+        })}
       </Paper>
 
       {/* Input area */}
